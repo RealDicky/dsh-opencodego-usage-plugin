@@ -9,6 +9,20 @@ OpenCode Go 订阅用量圆环插件（DeepSeek Harness Web GUI）。
 
 ## 安装
 
+> ⚠️ **先打插槽补丁（一次性，每个目标机都要做）**：圆环渲染依赖 ui-conversation 的
+> `conversation.input.usage` 插槽，原版 dsh **没有**这个插槽。在目标机的
+> deepseek-harness 仓库里：
+
+```bash
+cd /path/to/deepseek-harness
+git apply /path/to/dsh-opencodego-usage-plugin/patches/ui-conversation-usage-slot.patch
+pnpm --filter @deepseek-ai/dsh-client-ui-conversation bundle   # 重建 ui-conversation
+```
+
+> 插槽已随本插件提交到 [deepseek-harness](https://github.com/deepseek-ai/deepseek-harness)
+> 的 ui-conversation（`contract/slots.ts`、`apply.ts`、`skeleton/InputBar.tsx`）；
+> 如果你的目标仓库已是含该插槽的版本，跳过这步。
+
 ### 方式一：npm 包（发布后，一键）
 
 ```bash
@@ -36,10 +50,6 @@ dsh plugin --profile web add <包>
 #        apiKeyEnv: OPENCODE_GO_API_KEY
 # 配 key 后重启 dsh web
 ```
-
-## 硬依赖
-
-圆环渲染依赖 ui-conversation 的 `conversation.input.usage` 插槽声明（`contract/slots.ts`、`apply.ts`、`skeleton/InputBar.tsx`）。目标 dsh 若缺少该插槽，插件会静默不显示。该插槽随本插件在 [deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) 的 ui-conversation 中一并提交，需要与仓库版本同步。
 
 ## 配置
 

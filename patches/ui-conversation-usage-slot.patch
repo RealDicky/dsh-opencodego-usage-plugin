@@ -1,0 +1,51 @@
+diff --git a/packages/client/ui-conversation/src/client/apply.ts b/packages/client/ui-conversation/src/client/apply.ts
+index f57caea..2130e4c 100644
+--- a/packages/client/ui-conversation/src/client/apply.ts
++++ b/packages/client/ui-conversation/src/client/apply.ts
+@@ -284,6 +284,7 @@ export function apply(ctx: Context): void {
+     children: {
+       'conversation.input.plan': { kind: 'single', scope: 'session' },
+       'conversation.input.model': { kind: 'single', scope: 'session' },
++      'conversation.input.usage': { kind: 'single', scope: 'session' },
+     },
+     inject: (sessionId: SessionId | undefined): ComposerBarInjected => {
+       if (sessionId === undefined) {
+diff --git a/packages/client/ui-conversation/src/client/contract/slots.ts b/packages/client/ui-conversation/src/client/contract/slots.ts
+index 2125914..c80ad3d 100644
+--- a/packages/client/ui-conversation/src/client/contract/slots.ts
++++ b/packages/client/ui-conversation/src/client/contract/slots.ts
+@@ -219,6 +219,13 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
+      * a model here.
+      */
+     'conversation.input.model': { kind: 'single'; scope: 'session'; owner: InputControlOwnerProps }
++    /**
++     * The named usage seat in the composer tool row, immediately right of the
++     * context meter — one occupant, so taking it means rendering the whole
++     * usage readout yourself. Same `locked`-only owner share and same
++     * renders-nothing-while-empty contract as the plan and model seats.
++     */
++    'conversation.input.usage': { kind: 'single'; scope: 'session'; owner: InputControlOwnerProps }
+   }
+ 
+   /**
+@@ -544,7 +551,7 @@ export interface InputControlOwnerProps {
+ /** Full composer-bar props: standard kit & owner share & control-seat render share & injected share (hooks bound) & locale seat. */
+ export type ComposerBarProps =
+   PropsRuntime<'conversation.composer.bar'>
+-  & PropsRenderSlots<'conversation.input.plan' | 'conversation.input.model'>
++  & PropsRenderSlots<'conversation.input.plan' | 'conversation.input.model' | 'conversation.input.usage'>
+   & InjectFace<ComposerBarInjected>
+   & PropsLocale<'conversation'>
+ 
+diff --git a/packages/client/ui-conversation/src/client/skeleton/InputBar.tsx b/packages/client/ui-conversation/src/client/skeleton/InputBar.tsx
+index 9585677..55b8d0f 100644
+--- a/packages/client/ui-conversation/src/client/skeleton/InputBar.tsx
++++ b/packages/client/ui-conversation/src/client/skeleton/InputBar.tsx
+@@ -755,6 +755,7 @@ export function InputBar({
+             {rightItems}
+             {renderSlot('conversation.input.model', { locked: modelSeatLocked })}
+             <ContextMeter useProjection={useProjection} t={t} />
++            {renderSlot('conversation.input.usage', { locked })}
+             {interruptible && (
+               <Tooltip label={t('input.stop')} side="top" delayMs={500}>
+                 <button
