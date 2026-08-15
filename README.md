@@ -9,21 +9,32 @@ OpenCode Go 订阅用量圆环插件（DeepSeek Harness Web GUI）。
 
 ## 安装
 
-```bash
-# 1. 把包装进 web profile（git 安装）
-dsh plugin --profile web add git+https://github.com/RealDicky/dsh-opencodego-usage-plugin.git
+### 方式一：npm 包（发布后，一键）
 
-# 2. 在 profile patch 激活插件
-#    编辑 ~/.dsh/profiles/web/cordis.patch.yml，加入：
+```bash
+dsh plugin --profile web add @deepseek-ai/dsh-client-ui-opencode-usage
+# 自动激活（本包是 dsh.bundle，装完自动进 bundle 层）
+# 只需配好 key，然后重启 dsh web：
+#   ~/.dsh/.credentials.yaml（或环境变量）里放 OPENCODE_GO_API_KEY: sk-...
+```
+
+### 方式二：git 仓库直装
+
+```bash
+dsh plugin --profile web add git+https://github.com/RealDicky/dsh-opencodego-usage-plugin.git
+# 同样自动激活；配 key 后重启 dsh web
+```
+
+### 方式三：手动（普通包，未走 dsh.bundle 时）
+
+```bash
+dsh plugin --profile web add <包>
+# 编辑 ~/.dsh/profiles/web/cordis.patch.yml，加入：
 #    - id: ui-opencode-usage
 #      name: '@deepseek-ai/dsh-client-ui-opencode-usage'
 #      config:
 #        apiKeyEnv: OPENCODE_GO_API_KEY
-
-# 3. 配置凭据：~/.dsh/.credentials.yaml（或环境变量）里放
-#    OPENCODE_GO_API_KEY: sk-...
-
-# 4. 重启 dsh web
+# 配 key 后重启 dsh web
 ```
 
 ## 硬依赖
